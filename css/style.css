@@ -1,0 +1,51 @@
+/* 공통 설정 */
+* { padding: 0; margin: 0; box-sizing: border-box;}
+ul { list-style-type: none; }
+a { display: inline-block; text-decoration: none; }
+a:link { text-decoration:none; color: #222222; }
+a:hover { text-decoration:none; color: #222222; }
+a:visited { text-decoration:none; color: #222222; }
+a:active { text-decoration:none; color: #222222; }
+
+/* 버튼 */
+.buttons { width: 600px; text-align: right; margin: 20px auto; }
+.buttons li { display: inline; }
+.buttons button {
+    cursor: pointer;
+    padding: 3px 20px;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 5px;
+    border: none;
+}
+/* 제목 */
+h2 { width: 600px; margin-top: 20px; margin: 0 auto; padding: 10px; border-bottom: solid 3px black; }
+/* 회원가입 폼(member_form.php)*/
+.join_form {
+    width: 600px;
+    height: 235px;
+    margin: 0 auto;
+    border-bottom: solid 1px #cccccc;
+    }
+.join_form li {	height: 40px; padding: 20px 10px;}
+.join_form button { padding: 3px 10px; }
+.join_form .col1 { width: 130px; }
+.join_form .col2 { width: 360px; }
+.join_form input { width: 360px; height: 30px; }
+.join_form span { display: inline-block; }
+
+/* 로그인 폼 (login_form.php)*/
+.login_title { width:400px; margin: 0 auto; }
+.login_form { width: 400px; height: 210px; margin: 0 auto; border-bottom: solid 1px #cccccc; 
+	padding-top: 15px; }
+.login_form li { height: 50px; padding: 20px 20px;}
+.login_form span { display: inline-block; }
+.login_form .col1 { width: 100px; }
+.login_form .col2 { width: 250px; }
+.login_form input { width: 250px; height: 30px; }
+.login_form button { padding: 8px 156px; cursor: pointer;}
+
+/* 메인 화면(index.php) */
+.header { width: 450px; margin: 0 auto; }
+.header .logo { float: left; margin-top: 30px; }
+.header .top { float: right; margin-top: 30px; }
