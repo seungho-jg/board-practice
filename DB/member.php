@@ -14,6 +14,19 @@
             $result = mysqli_query($this->connect(), $sql);
             return mysqli_fetch_assoc($result);
         }
+
+        public function findNameById($id) {
+            $sql = "
+                select name from members where id='$id';
+            ";
+            $result = mysqli_query($this->connect(), $sql);
+            $row = mysqli_fetch_assoc($result);
+            if ($row) {
+                return $row["name"];
+            } else {
+                return "알수없음";
+            }
+        }
         // 사용자 계정 생성
         public function insert($id, $pass, $name, $email) {
             /* 단방향 암호화 ( BCRYPT / ARGON2I / ARGON2ID ) */

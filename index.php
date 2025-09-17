@@ -1,13 +1,5 @@
 <?php
-    session_start();
-    if(isset($_SESSION["userid"]))
-        $userid = $_SESSION["userid"];
-    else
-        $userid = "";
-    if(isset($_SESSION["username"]))
-        $username = $_SESSION["username"];
-    else
-        $username = "";
+    include "global/session.php";
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,19 +16,24 @@
     <div class="top">
         <?php
             if(!$userid) {
-                echo "<span><a href='page/register_form.php'>회원가입</a></span>";
+                echo "<span><a href='page/member_register_form.php'>회원가입</a></span>";
                 echo "<span> | </span>";
-                echo "<span><a href='page/login_form.php'>로그인</a></span>";
+                echo "<span><a href='page/member_login_form.php'>로그인</a></span>";
             } else {
                 $logged = $username."(".$userid.")";
                 echo "<span> $logged </span>";
                 echo "<span> | </span>";
-                echo "<span><a href='func/logout.php'>로그아웃</a></span>";
+                echo "<span><a href='memberFunc/logout.php'>로그아웃</a></span>";
                 echo "<span> | </span>";
-                echo "<span><a href='page/modify_form.php'>정보수정</a></span>";
+                echo "<span><a href='page/member_modify_form.php'>정보수정</a></span>";
             }
         ?>
     </div>
+    <iframe class="frame" src="page/board_list.php" title="board_form"></iframe>
+    <?php
+        if ($userid)
+            echo "<div class='post_btn'><a href='page/board_form.php'>+</a></div>"
+    ?>
 
 </div>
 </body>
