@@ -24,7 +24,7 @@
             if ($row) {
                 return $row["name"];
             } else {
-                return "알수없음";
+                return "";
             }
         }
         // 사용자 계정 생성

@@ -61,8 +61,8 @@
         <button onclick="location.href='board_list.php?page=<?=$page?>'" class="bg-blue-100 px-4 py-1 rounded-full hover:bg-blue-200">목록보기</button>
         <?php
             if($userid == $id) {
-                echo "<button onclick=\"location.href='../page/board_modify_form.php?num<?=$num?>&page=<?=$page?>'\" class=\"bg-blue-100 px-4 py-1 rounded-full hover:bg-blue-200\">수정하기</button>";
-                echo "<button onclick=\"location.href='../boardFunc/delete_board.php?num<?=$num?>&page=<?=$page?>'\" class=\"bg-blue-100 px-4 py-1 rounded-full hover:bg-red-200\">삭제하기</button>";
+                echo "<button onclick=\"location.href='board_modify_form.php?num=$num&page=$page'\" class=\"bg-blue-100 px-4 py-1 rounded-full hover:bg-blue-200\">수정하기</button>";
+                echo "<button onclick=\"location.href='../boardFunc/delete_board.php?num=$num&page=$page'\" class=\"bg-blue-100 px-4 py-1 rounded-full hover:bg-red-200\">삭제하기</button>";
             }
         ?>
 

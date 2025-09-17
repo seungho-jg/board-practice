@@ -1,5 +1,17 @@
 <?php
-include "../global/session.php";
+    include "../global/session.php";
+    $num = $_GET["num"];
+    $page = $_GET["page"];
+    include "../DB/board.php";
+    $boardDB = new boardDB();
+    $result = $boardDB->findById($num);
+
+    $row = mysqli_fetch_assoc($result);
+
+    $id = $row["id"];
+    $subject = $row["subject"];
+    $content = $row["content"];
+    $file_name = $row["file_name"];
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +39,7 @@ include "../global/session.php";
 </head>
 <body>
 <h2>글쓰기</h2>
-<form name="board" method="post" action="../boardFunc/insert_board.php" enctype="multipart/form-data">
+<form name="board" method="post" action="../boardFunc/update_board.php?id=<?=$id?>&num=<?=$num?>&page=<?=$page?>" enctype="multipart/form-data">
     <ul class="board_form">
         <li>
             <span class="col1">이름 : </span>
@@ -35,15 +47,15 @@ include "../global/session.php";
         </li>
         <li>
             <span class="col1">제목 : </span>
-            <span class="col2"><input name="subject" type="text"/></span>
+            <span class="col2"><input name="subject" type="text" value="<?=$subject?>"/></span>
         </li>
         <li class="area">
             <span class="col1">내용 : </span>
-            <span class="col2"><textarea name="content"></textarea></span>
+            <span class="col2"><textarea name="content"><?=$content?></textarea></span>
         </li>
         <li>
             <span class="col1">첨부파일</span>
-            <span class="col2"><input type="file" name="upfile" /></span>
+            <span class="col2"><?=$file_name?></span>
         </li>
     </ul>
     <ul class="buttons">
@@ -51,7 +63,7 @@ include "../global/session.php";
             <button type="button" onclick="check_input()">저장하기</button>
         </li>
         <li>
-            <button type="button" onclick="javascript:location.href='/board'">목록보기</button>
+            <button type="button" onclick="javascript:location.href='/board/page/board_list.php'">목록보기</button>
         </li>
     </ul>
 </form>

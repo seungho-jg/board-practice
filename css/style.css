@@ -70,7 +70,7 @@ h2 { width: 600px; margin-top: 20px; margin: 0 auto; padding: 10px; border-botto
     background-color: rgb(137, 166, 123);
     bottom: 50px;
     right: 50px;
-    padding: 15px 20px;
+    padding: 25px 20px;
     border-radius: 100%;
 }
 
@@ -135,4 +135,16 @@ h2 { width: 600px; margin-top: 20px; margin: 0 auto; padding: 10px; border-botto
 .board_list .col5 { /* 등록일 */
     width: 150px;
     text-align: center;
+}
+
+.page_btn_container {
+    display: flex;
+    flex-direction: row;
+    padding: 0 150px;
+    width: 100%;
+    margin-top: 10px;
+}
+.page_btn {
+    padding: 5px;
+    border: 1px;
 }

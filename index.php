@@ -30,10 +30,6 @@
         ?>
     </div>
     <iframe class="frame" src="page/board_list.php" title="board_form"></iframe>
-    <?php
-        if ($userid)
-            echo "<div class='post_btn'><a href='page/board_form.php'>+</a></div>"
-    ?>
 
 </div>
 </body>
