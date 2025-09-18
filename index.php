@@ -1,6 +1,5 @@
 <?php
     include "global/session.php";
-    $_SESSION["view"] = "";
 ?>
 <!DOCTYPE html>
 <html>

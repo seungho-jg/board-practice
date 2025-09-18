@@ -15,7 +15,10 @@
     $comment_num = $_GET["cnum"];
 
     $content = $_POST["content"];
-    $result = $commentDB->update_comment($comment_num, $content);
+
+    $modify_count = $commentDB->findById($comment_num)["modify_count"];
+
+    $result = $commentDB->update_comment($comment_num, $content, $modify_count+1);
     if($result) {
         echo "
           <script>location.href='../page/view.php?num=$board_num&page=$page'</script>

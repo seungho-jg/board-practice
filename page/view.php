@@ -119,11 +119,14 @@
             $comment_id = $row["id"];
             $timestamp = $row["timestamp"];
             $member_num = $row["num"];
+            $modify_count = $row["modify_count"];
 
             $cmt = "<div class='flex flex-row rounded-lg shadow-sm w-ful bg-zinc-100 p-2 gap-4'>"
                     ."<div class='font-bold px-4'>".$comment_name."(".$comment_id.")"."</div>"
                     ."<div class='w-1/3'>".$comment_content."</div>";
-
+//            if ($modify_count > 0) {
+//                $cmt.="[수정됨]";
+//            }
 
             // 작성자 본인만 수정 삭제가능
             if ($usernum === $member_num) {
