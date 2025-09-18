@@ -24,7 +24,7 @@
             if ($row) {
                 return $row["name"];
             } else {
-                return "";
+                return "삭제된 계정";
             }
         }
         // 사용자 계정 생성
