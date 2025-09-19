@@ -25,14 +25,14 @@
     if($result) {
         $data = [
             "status" => "success",
-            "message" => "댓글 작성에 성공하였습니다."
+            "message" => "댓글 수정에 성공하였습니다."
         ];
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();
     } else {
         $data = [
             "status" => "fail",
-            "message" => "댓글 작성에 실패했습니다."
+            "message" => "댓글 수정에 실패했습니다."
         ];
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         die();

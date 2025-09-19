@@ -121,7 +121,7 @@
                     method: "POST",
                     body: formData,
                 });
-                console.log(await response.json)
+                console.log(await response.json())
             }
 
             if (commentMode === "comment") {
@@ -129,7 +129,7 @@
                     method: "POST",
                     body: formData,
                 });
-                console.log(await response.json)
+                console.log(await response.json())
             }
 
             if (commentMode === "modify") {
@@ -138,7 +138,7 @@
                     method: "POST",
                     body: formData,
                 });
-                console.log(await response.json)
+                console.log(await response.json())
             }
 
             await location.reload();
