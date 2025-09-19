@@ -121,7 +121,12 @@
             $member_num = $row["num"];
             $modify_count = $row["modify_count"];
 
-            $cmt = "<div class='flex flex-row rounded-lg shadow-sm w-ful bg-zinc-100 p-2 gap-4'>"
+            $cmt = "<div class='flex flex-row rounded-lg shadow-sm w-ful ";
+            if($usernum === $member_num)
+                $cmt.="bg-yellow-50";
+            else
+                $cmt.="bg-zinc-100";
+            $cmt.= " p-2 gap-4'>"
                     ."<div class='font-bold px-4'>".$comment_name."(".$comment_id.")"."</div>"
                     ."<div class='w-1/3'>".$comment_content."</div>";
 //            if ($modify_count > 0) {
