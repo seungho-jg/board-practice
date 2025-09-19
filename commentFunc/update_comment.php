@@ -3,27 +3,38 @@
     include "../DB/comment.php";
     $commentDB = new commentDB();
 
-    if(!$userid) {
-        echo "<script>
-                    alert('게시판 글쓰기는 로그인 후 이용해 주세요');
-                    history.go(-1);
-                  </script>";
-        exit;
-    }
     $board_num = $_GET["board_num"];
-    $page = $_GET["page"];
-    $comment_num = $_GET["cnum"];
 
     $content = $_POST["content"];
+    $comment_num = $_POST["comment_num"];
+    header("Content-Type: application/json");
+
+    if(!$userid) {
+        $data = [
+            "status" => "fail",
+            "message" => "댓글은 로그인 이후 사용해 주세요"
+        ];
+
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        die();
+    }
 
     $modify_count = $commentDB->findById($comment_num)["modify_count"];
 
     $result = $commentDB->update_comment($comment_num, $content, $modify_count+1);
     if($result) {
-        echo "
-          <script>location.href='../page/view.php?num=$board_num&page=$page'</script>
-        ";
+        $data = [
+            "status" => "success",
+            "message" => "댓글 작성에 성공하였습니다."
+        ];
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        die();
     } else {
-        echo "<script>alert('댓글 수정에 실패하였습니다.'); history.go(-1);</script>";
+        $data = [
+            "status" => "fail",
+            "message" => "댓글 작성에 실패했습니다."
+        ];
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+        die();
     }
 ?>

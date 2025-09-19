@@ -61,14 +61,87 @@
     <link rel="stylesheet" href="../css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        function checkComment() {
+        let commentMode = "comment"  /* comment: 일반댓글모드 / subcomment: 대댓글모드 / modify: 댓글수정모드 */
+        let current_selected_comment_num = "" // 현재선택된 댓글
+
+        /* 댓글 수정버튼을 눌렀을 때 */
+        function handleModifyModeON(event, comment_num, comment_content) {
+            event.stopPropagation(); // 버튼 상위 부모에게 이벤트 전달방지
+            commentMode = "modify" // 수정모드로 변경
+            current_selected_comment_num = comment_num;
+            const subcomment_info = document.getElementById("subcomment_info"); // 대댓글모드시 나오게되는 안내글
+            const submitBtn = document.getElementById("submitBtn"); // 버튼내용변경을 위해
+            const comment = document.getElementById(`comment-${comment_num}`); // 댓글 지우기
+            const input = document.getElementById("input");
+            input.value = comment_content;
+            comment.style.opacity  = 0.2;
+            submitBtn.innerText = "수정"; // 버튼내용 "수정"으로 변경
+            subcomment_info.innerText = ""; // 대댓글 모드 off
+        }
+
+        /* 댓글 수정모드에서 취소버튼을 눌렀을 때 */
+        function handleModifyModeOff() {
+            location.reload(); // 새로고침(임시)
+        }
+
+        /* 대댓글 모드 */
+        function handleSubcommentMode(parent_num, parent_name, parent_id, parent_content) {
+            const subcomment_info = document.getElementById("subcomment_info");
+            const submitBtn = document.getElementById("submitBtn");
+
+            if (parent_num === current_selected_comment_num) {
+                /* 같은 댓글 선택 시 선택 해제*/
+                commentMode = "comment";
+                subcomment_info.innerText = "";
+                submitBtn.innerText = "작성";
+                current_selected_comment_num = "";
+                return;
+            }
+            commentMode = "subcomment";
+            current_selected_comment_num = parent_num;
+            submitBtn.innerText = "답장";
+            subcomment_info.innerText = `ㄴ ${parent_name}(${parent_id}): ${parent_content}`; // 대댓글모드시 나오게되는 안내글
+        }
+
+        /* 전송버튼 시 3가지 모드에 따라 처리(비동기) */
+        async function checkComment(depth) {
             const comment = document.comment;
+            const formData = new FormData(comment);
+
             if (!comment.content.value) {
                 alert("내용을 입력하세요");
                 comment.focus();
                 return;
             }
-            comment.submit();
+
+            if (commentMode === "subcomment") {
+                formData.append("depth", depth);
+                formData.append("parent_num", current_selected_comment_num);
+                const response = await fetch("../commentFunc/insert_subcomment.php?board_num=<?=$num?>", {
+                    method: "POST",
+                    body: formData,
+                });
+                console.log(await response.json)
+            }
+
+            if (commentMode === "comment") {
+                const response = await fetch("../commentFunc/insert_comment.php?board_num=<?=$num?>", {
+                    method: "POST",
+                    body: formData,
+                });
+                console.log(await response.json)
+            }
+
+            if (commentMode === "modify") {
+                formData.append("comment_num", current_selected_comment_num);
+                const response = await fetch("../commentFunc/update_comment.php?board_num=<?=$num?>", {
+                    method: "POST",
+                    body: formData,
+                });
+                console.log(await response.json)
+            }
+
+            await location.reload();
         }
     </script>
 </head>
@@ -121,7 +194,7 @@
             $member_num = $row["num"];
             $modify_count = $row["modify_count"];
 
-            $cmt = "<div class='flex flex-row rounded-lg shadow-sm w-ful ";
+            $cmt = "<div id='comment-$comment_num' onclick='handleSubcommentMode($comment_num, `$comment_name`, `$comment_id`, `$comment_content`)' class='flex flex-row rounded-lg hover:cursor-pointer hover:translate-x-2 duration-100 shadow-sm w-ful ";
             if($usernum === $member_num)
                 $cmt.="bg-yellow-50";
             else
@@ -129,17 +202,18 @@
             $cmt.= " p-2 gap-4'>"
                     ."<div class='font-bold px-4'>".$comment_name."(".$comment_id.")"."</div>"
                     ."<div class='w-1/3'>".$comment_content."</div>";
-//            if ($modify_count > 0) {
-//                $cmt.="[수정됨]";
-//            }
+
+            if ($modify_count > 0) {
+                $cmt.="[수정됨]";
+            }
 
             // 작성자 본인만 수정 삭제가능
             if ($usernum === $member_num) {
-                $cmt .= "<div id='comment' onclick='location.href=\"../page/comment_modify_form.php?num=$num&page=$page&cnum=$comment_num&content=$comment_content\"' class='px-2 bg-blue-100 rounded-md hover:cursor-pointer'>수정</div>"
+                $cmt .= "<div id='comment' onclick='handleModifyModeON(event, `$comment_num`, `$comment_content`)' class='px-2 bg-blue-100 rounded-md hover:cursor-pointer'>수정</div>"
                         ."<div onclick='location.href=\"../commentFunc/delete_comment.php?num=$num&page=$page&comment_num=$comment_num\"' class='px-2 bg-red-100 rounded-md hover:cursor-pointer'>삭제</div>";
             }
 
-            $cmt.="<div class='font-thin text-sm text-gray-500 fixed right-10'>".$timestamp."</div>"
+            $cmt.="<div class='font-thin text-sm text-gray-500 absolute right-10'>".$timestamp."</div>"
             ."</div>";
 
             echo $cmt;
@@ -148,12 +222,13 @@
     <!-- 댓글 작성폼 -->
     <div>
         <form name="comment" action="../commentFunc/insert_comment.php?board_num=<?=$num?>&page=<?=$page?>" method="post">
+            <div id="subcomment_info"></div>
             <div class="w-full flex flex-row px-10 gap-5">
                 <div>
                     <b><?=$username?></b>
-                    <input type="text" name="content" class="bg-gray-100 border border-1 w-[500px] px-2 py-1"/>
+                    <input id="input" type="text" name="content" class="bg-gray-100 border border-1 w-[500px] px-2 py-1"/>
                 </div>
-                <button onclick="checkComment()" class="bg-slate-200 px-5 rounded-lg">전송</button>
+                <button type="button" id="submitBtn" onclick="checkComment()" class="bg-slate-200 px-5 rounded-lg">작성</button>
             </div>
         </form>
 
