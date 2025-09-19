@@ -61,13 +61,17 @@
     <link rel="stylesheet" href="../css/style.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        let commentMode = "comment"  /* comment: 일반댓글모드 / subcomment: 대댓글모드 / modify: 댓글수정모드 */
-        let current_selected_comment_num = "" // 현재선택된 댓글
+        let commentMode = "comment";  /* comment: 일반댓글모드 / subcomment: 대댓글모드 / modify: 댓글수정모드 */
+        let current_selected_comment_num = ""; // 현재선택된 댓글
+        let current_selected_comment_depth = -1;
 
         /* 댓글 수정버튼을 눌렀을 때 */
         function handleModifyModeON(event, comment_num, comment_content) {
+            if (commentMode === 'modify' || commentMode === 'subcomment'){
+                return;
+            }
             event.stopPropagation(); // 버튼 상위 부모에게 이벤트 전달방지
-            commentMode = "modify" // 수정모드로 변경
+            commentMode = "modify"; // 수정모드로 변경
             current_selected_comment_num = comment_num;
             const subcomment_info = document.getElementById("subcomment_info"); // 대댓글모드시 나오게되는 안내글
             const submitBtn = document.getElementById("submitBtn"); // 버튼내용변경을 위해
@@ -85,26 +89,31 @@
         }
 
         /* 대댓글 모드 */
-        function handleSubcommentMode(parent_num, parent_name, parent_id, parent_content) {
+        function handleSubcommentMode(parent_num, parent_name, parent_id, parent_content, parent_depth) {
+            if (commentMode === 'modify'){
+                return;
+            }
             const subcomment_info = document.getElementById("subcomment_info");
             const submitBtn = document.getElementById("submitBtn");
 
             if (parent_num === current_selected_comment_num) {
                 /* 같은 댓글 선택 시 선택 해제*/
                 commentMode = "comment";
+                current_selected_comment_depth = -1;
                 subcomment_info.innerText = "";
                 submitBtn.innerText = "작성";
                 current_selected_comment_num = "";
                 return;
             }
             commentMode = "subcomment";
+            current_selected_comment_depth = parent_depth;
             current_selected_comment_num = parent_num;
             submitBtn.innerText = "답장";
             subcomment_info.innerText = `ㄴ ${parent_name}(${parent_id}): ${parent_content}`; // 대댓글모드시 나오게되는 안내글
         }
 
         /* 전송버튼 시 3가지 모드에 따라 처리(비동기) */
-        async function checkComment(depth) {
+        async function checkComment() {
             const comment = document.comment;
             const formData = new FormData(comment);
 
@@ -115,7 +124,7 @@
             }
 
             if (commentMode === "subcomment") {
-                formData.append("depth", depth);
+                formData.append("parent_depth", current_selected_comment_depth);
                 formData.append("parent_num", current_selected_comment_num);
                 const response = await fetch("../commentFunc/insert_subcomment.php?board_num=<?=$num?>", {
                     method: "POST",
@@ -193,19 +202,19 @@
             $timestamp = $row["timestamp"];
             $member_num = $row["num"];
             $modify_count = $row["modify_count"];
+            $depth = $row["depth"];
+            $child_count = $row["child_count"];
 
-            $cmt = "<div id='comment-$comment_num' onclick='handleSubcommentMode($comment_num, `$comment_name`, `$comment_id`, `$comment_content`)' class='flex flex-row rounded-lg hover:cursor-pointer hover:translate-x-2 duration-100 shadow-sm w-ful ";
+            $depth_style = $depth * 10; // 들여쓰기 스타일 정도
+            $cmt = "<div id='comment-$comment_num' onclick='handleSubcommentMode($comment_num, `$comment_name`, `$comment_id`, `$comment_content`, `$depth`)' class='flex flex-row rounded-lg hover:cursor-pointer hover:translate-x-2 duration-100 shadow-sm ";
             if($usernum === $member_num)
                 $cmt.="bg-yellow-50";
             else
                 $cmt.="bg-zinc-100";
-            $cmt.= " p-2 gap-4'>"
+            $cmt.= " ml-$depth_style p-2 gap-4'>"
                     ."<div class='font-bold px-4'>".$comment_name."(".$comment_id.")"."</div>"
                     ."<div class='w-1/3'>".$comment_content."</div>";
 
-            if ($modify_count > 0) {
-                $cmt.="[수정됨]";
-            }
 
             // 작성자 본인만 수정 삭제가능
             if ($usernum === $member_num) {
@@ -213,8 +222,11 @@
                         ."<div onclick='location.href=\"../commentFunc/delete_comment.php?num=$num&page=$page&comment_num=$comment_num\"' class='px-2 bg-red-100 rounded-md hover:cursor-pointer'>삭제</div>";
             }
 
-            $cmt.="<div class='font-thin text-sm text-gray-500 absolute right-10'>".$timestamp."</div>"
-            ."</div>";
+            $cmt.="<div class='font-thin text-sm text-gray-500 absolute right-10'>".$timestamp;
+            if ($modify_count > 0) {
+                $cmt.=" [수정됨]";
+            }
+            $cmt.="</div></div>";
 
             echo $cmt;
         }
